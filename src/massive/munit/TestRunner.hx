@@ -103,6 +103,7 @@ class TestRunner implements IAsyncDelegateObserver
     private function get_clientCount():Int { return clients.length; }
 
     public var running(default, null):Bool;
+    public var successful:Bool;
 
     private var testCount:Int;
     private var failCount:Int;
@@ -378,7 +379,7 @@ class TestRunner implements IAsyncDelegateObserver
         {
             if (completionHandler != null)
             {
-                var successful:Bool = (passCount == testCount);
+                successful = (passCount == testCount);
                 var handler:Dynamic = completionHandler;
 
                 Timer.delay(function() { handler(successful); }, 10);
