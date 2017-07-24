@@ -1002,3 +1002,5 @@ massive_munit_client_HTTPClient.responsePending = false;
 massive_munit_util_Timer.arr = [];
 BrowserTestsCompleteReporter.main();
 })(typeof exports != "undefined" ? exports : typeof window != "undefined" ? window : typeof self != "undefined" ? self : this, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
+
+//# sourceMappingURL=tests-complete.js.map

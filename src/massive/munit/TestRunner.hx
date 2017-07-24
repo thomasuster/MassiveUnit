@@ -296,16 +296,42 @@ class TestRunner implements IAsyncDelegateObserver
             }
             else
             {
-                testCount++; // note we don't include ignored in final test count
-                Reflect.callMethod(activeHelper.test, activeHelper.before, emptyParams);
                 testStartTime = Timer.stamp();
+                var result:TestResult = cast testCaseData.result;
+                testCount++; // note we don't include ignored in final test count
+                try {
+                    Reflect.callMethod(activeHelper.test, activeHelper.before, emptyParams);    
+                }
+                catch(e:Dynamic) {
+                    handleTestException(e, result);
+                    continue;
+                }
+                
                 executeTestCase(testCaseData, testCaseData.result.async);
 
-                if (!asyncPending)
-                    Reflect.callMethod(activeHelper.test, activeHelper.after, emptyParams);
+                if (!asyncPending) {
+                    try {
+                        Reflect.callMethod(activeHelper.test, activeHelper.after, emptyParams);
+                    }
+                    catch(e:Dynamic) {
+                        handleTestException(e, result);
+                        continue;
+                    }
+                }
                 else
                     break;
+                markTestPassed(result);
             }
+        }
+    }
+
+    function markTestPassed(result:TestResult)
+    {
+        if (result.passed)
+        {
+            passCount++;
+            for (c in clients)
+                c.addPass(result);
         }
     }
 
@@ -332,44 +358,45 @@ class TestRunner implements IAsyncDelegateObserver
 
                 result.passed = true;
                 result.executionTime = Timer.stamp() - testStartTime;
-                passCount++;
-                for (c in clients)
-                    c.addPass(result);
             }
         }
         catch(e:Dynamic)
         {
-            if(async && asyncDelegate != null)
-            {
-                asyncDelegate.cancelTest();
-                asyncDelegate = null;
-            }
+            handleTestException(e, result);
+        }
+    }
 
-			#if hamcrest
+    function handleTestException(e:Dynamic, result:TestResult):Void {
+        
+        if(result.async && asyncDelegate != null)
+        {
+            asyncDelegate.cancelTest();
+            asyncDelegate = null;
+        }
+
+        #if hamcrest
 			if (Std.is(e, org.hamcrest.AssertionException))
 				e = new AssertionException(e.message, e.info);
 			#end
 
-            if (Std.is(e, AssertionException))
-            {
-                result.executionTime = Timer.stamp() - testStartTime;
-                result.failure = e;
-                failCount++;
-                for (c in clients)
-                    c.addFail(result);
-            }
-            else
-            {
-                result.executionTime = Timer.stamp() - testStartTime;
-                if (!Std.is(e, MUnitException))
-                    e = new UnhandledException(e, result.location);
+        if (Std.is(e, AssertionException))
+        {
+            result.executionTime = Timer.stamp() - testStartTime;
+            result.failure = e;
+            failCount++;
+            for (c in clients)
+                c.addFail(result);
+        }
+        else
+        {
+            result.executionTime = Timer.stamp() - testStartTime;
+            if (!Std.is(e, MUnitException))
+                e = new UnhandledException(e, result.location);
 
-                result.error = e;
-                errorCount++;
-                for (c in clients)
-                    c.addError(result);
-            }
-
+            result.error = e;
+            errorCount++;
+            for (c in clients)
+                c.addError(result);
         }
     }
 
@@ -402,7 +429,14 @@ class TestRunner implements IAsyncDelegateObserver
         asyncPending = false;
         asyncDelegate = null;
         executeTestCase(testCaseData, false);
-        Reflect.callMethod(activeHelper.test, activeHelper.after, emptyParams);
+        try
+        {
+            Reflect.callMethod(activeHelper.test, activeHelper.after, emptyParams);
+        }
+        catch(e:Dynamic) {
+            
+        }
+        markTestPassed(testCaseData.result);
         execute();
     }
 
@@ -423,7 +457,12 @@ class TestRunner implements IAsyncDelegateObserver
         asyncDelegate = null;
         errorCount++;
         for (c in clients) c.addError(result);
-        Reflect.callMethod(activeHelper.test, activeHelper.after, emptyParams);
+        try {
+            Reflect.callMethod(activeHelper.test, activeHelper.after, emptyParams);   
+        }
+        catch(e:Dynamic) {
+            handleTestException(e,result);
+        }
         execute();
     }
 

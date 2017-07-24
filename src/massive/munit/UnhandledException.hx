@@ -49,7 +49,8 @@ class UnhandledException extends MUnitException
 	 */
 	public function new(source:Dynamic, testLocation:String) 
 	{
-		super(source.toString() + formatLocation(source, testLocation), null);
+        var sourceString:String = Std.string(source);
+        super(sourceString + formatLocation(source, testLocation), null);
 		type = ReflectUtil.here().className;
 	}
 	

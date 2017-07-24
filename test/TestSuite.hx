@@ -10,6 +10,8 @@ import massive.munit.client.URLRequestTest;
 import massive.munit.MUnitExceptionTest;
 import massive.munit.TestClassHelperTest;
 import massive.munit.TestResultTest;
+import massive.munit.TestRunnerAfterFailTest;
+import massive.munit.TestRunnerBeforeFailTest;
 import massive.munit.TestRunnerTest;
 import massive.munit.TestSuiteTest;
 import massive.munit.UnhandledExceptionTest;
@@ -38,6 +40,8 @@ class TestSuite extends massive.munit.TestSuite
 		add(massive.munit.MUnitExceptionTest);
 		add(massive.munit.TestClassHelperTest);
 		add(massive.munit.TestResultTest);
+		add(massive.munit.TestRunnerAfterFailTest);
+		add(massive.munit.TestRunnerBeforeFailTest);
 		add(massive.munit.TestRunnerTest);
 		add(massive.munit.TestSuiteTest);
 		add(massive.munit.UnhandledExceptionTest);
