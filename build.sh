@@ -20,4 +20,4 @@ haxelib run munit test -coverage
 
 
 ## package up and install over current version
-haxelib run mlib install
+# haxelib run mlib install
