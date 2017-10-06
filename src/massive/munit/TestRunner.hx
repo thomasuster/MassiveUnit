@@ -28,6 +28,7 @@
 
 package massive.munit;
 
+import cpp.vm.Gc;
 import haxe.PosInfos;
 
 import massive.munit.Assert;
@@ -238,22 +239,17 @@ class TestRunner implements IAsyncDelegateObserver
             var suite:TestSuite = testSuites[i];
             for (testClass in suite)
             {
-                if (activeHelper == null || activeHelper.type != testClass)
-                {
-                    activeHelper = new TestClassHelper(testClass, isDebug);
-                    Reflect.callMethod(activeHelper.test, activeHelper.beforeClass, emptyParams);
+                executeTestClass(testClass, suite, i);
+                activeHelper = null;
+                #if MUNIT_TEST_TESTS_GC
+                Gc.run(true);
+                if(Gc.getNextZombie() != null) {
+                    Sys.println("ZOMBIE PASS");
                 }
-                executeTestCases();
-                if (!asyncPending)
-                {
-                    Reflect.callMethod(activeHelper.test, activeHelper.afterClass, emptyParams);
+                else {
+                    Sys.println("ZOMBIE FAIL");
                 }
-                else
-                {
-                    suite.repeat();
-                    suiteIndex = i;
-                    return;
-                }
+                #end
             }
             testSuites[i] = null;
         }
@@ -270,6 +266,28 @@ class TestRunner implements IAsyncDelegateObserver
                 }
                 client.reportFinalStatistics(testCount, passCount, failCount, errorCount, ignoreCount, time);
             } 
+        }
+    }
+
+    function executeTestClass(testClass:Class<Dynamic>, suite:TestSuite, i:Int):Void {
+        if (activeHelper == null || activeHelper.type != testClass)
+        {
+            activeHelper = new TestClassHelper(testClass, isDebug);
+            Reflect.callMethod(activeHelper.test, activeHelper.beforeClass, emptyParams);
+        }
+        #if MUNIT_TEST_TESTS_GC
+        Gc.doNotKill(activeHelper.test);
+        #end
+        executeTestCases();
+        if (!asyncPending)
+        {
+            Reflect.callMethod(activeHelper.test, activeHelper.afterClass, emptyParams);
+        }
+        else
+        {
+            suite.repeat();
+            suiteIndex = i;
+            return;
         }
     }
 
