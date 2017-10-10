@@ -250,6 +250,11 @@ class TestRunner implements IAsyncDelegateObserver
                     Sys.println("ZOMBIE FAIL");
                 }
                 #end
+                #if MUNIT_MEMUSAGE
+                var mb = Gc.memUsage() / 1000000;
+                mb = Math.floor(mb*100)/100;
+                Sys.println(mb + " MB");
+                #end
             }
             testSuites[i] = null;
         }
