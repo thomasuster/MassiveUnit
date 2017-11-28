@@ -28,9 +28,6 @@
 
 package massive.munit;
 
-import cpp.vm.Gc;
-import haxe.PosInfos;
-
 import massive.munit.Assert;
 import massive.munit.async.AsyncDelegate;
 import massive.munit.async.AsyncFactory;

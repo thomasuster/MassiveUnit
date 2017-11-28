@@ -35,6 +35,9 @@ class TestMain
 
 		runner.completionHandler = completionHandler;
 		runner.run(suites);
+        if(runner.successful)
+            Sys.exit(0);
+        Sys.exit(1);
 	}
 
 	/*
