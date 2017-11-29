@@ -227,6 +227,7 @@ class TestRunner implements IAsyncDelegateObserver
         #else
             execute();
         #end
+        successful = (passCount == testCount);
     }
 
     private function execute():Void
@@ -426,7 +427,6 @@ class TestRunner implements IAsyncDelegateObserver
         {
             if (completionHandler != null)
             {
-                successful = (passCount == testCount);
                 var handler:Dynamic = completionHandler;
 
                 Timer.delay(function() { handler(successful); }, 10);
