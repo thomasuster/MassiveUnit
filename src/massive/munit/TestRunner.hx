@@ -103,10 +103,10 @@ class TestRunner implements IAsyncDelegateObserver
     public var running(default, null):Bool;
     public var successful:Bool;
 
-    private var testCount:Int;
+    public var testCount:Int;
     private var failCount:Int;
     private var errorCount:Int;
-    private var passCount:Int;
+    public var passCount:Int;
     private var ignoreCount:Int;
     private var clientCompleteCount:Int;
 
