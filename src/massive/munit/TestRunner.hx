@@ -209,24 +209,24 @@ class TestRunner implements IAsyncDelegateObserver
             testSuites.push(Type.createInstance(suiteType, new Array()));
         }
 
-        #if (neko||cpp) 
-            var self = this;
-            var runThread:Thread = Thread.create(function()
-            {
-                self.execute();
-                while (self.running)
-                {
-                    Sys.sleep(.2);
-                }
-                var mainThead:Thread = Thread.readMessage(true);
-                mainThead.sendMessage("done");
-            });
-
-            runThread.sendMessage(Thread.current());
-            Thread.readMessage(true);
-        #else
+//        #if (neko||cpp) 
+//            var self = this;
+//            var runThread:Thread = Thread.create(function()
+//            {
+//                self.execute();
+//                while (self.running)
+//                {
+//                    Sys.sleep(.2);
+//                }
+//                var mainThead:Thread = Thread.readMessage(true);
+//                mainThead.sendMessage("done");
+//            });
+//
+//            runThread.sendMessage(Thread.current());
+//            Thread.readMessage(true);
+//        #else
             execute();
-        #end
+//        #end
         successful = (passCount == testCount);
     }
 
