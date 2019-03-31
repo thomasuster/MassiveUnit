@@ -29,7 +29,7 @@ class TestSuite extends massive.munit.TestSuite
 	public function new()
 	{
 		super();
-		var ignore = [];
+		var ignore:Array<Dynamic> = [];
 
 		add(massive.munit.AssertTest);
 		add(massive.munit.TestSuiteTest);
