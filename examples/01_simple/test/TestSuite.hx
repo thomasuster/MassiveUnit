@@ -1,6 +1,7 @@
 import massive.munit.TestSuite;
 
 import math.CalculatorTest;
+import math.TempTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -13,7 +14,9 @@ class TestSuite extends massive.munit.TestSuite
 	public function new()
 	{
 		super();
+		var ignore = [];
 
 		add(math.CalculatorTest);
+		add(math.TempTest);
 	}
 }

@@ -176,48 +176,51 @@ class GenerateCommand extends MUnitCommand
 		hxmlOutput.writeString(content, true);
 		
 	}
-	
-	
-	private function createTestSuiteClass():Void
+   
+   private function createTestSuiteClass():Void
 	{
-		var classes:Array<String> = getFilteredClassesInDirectory(dir);
+		var classes:Array<{name: String, ignore: Bool}> = getFilteredClassesInDirectory(dir);
 		var content:String = generateTestSuiteClassFromClasses(classes);
 
 		var testSuite:File = dir.resolvePath("TestSuite.hx");
 		testSuite.writeString(content, true);
 	}	
 	
-	private function getFilteredClassesInDirectory(dir:File):Array<String>
+	private function getFilteredClassesInDirectory(dir:File):Array<{name: String, ignore: Bool}>
 	{
 	
 		var files:Array<File> = dir.getRecursiveDirectoryListing(~/.*Test\.hx$/);
 	
-		var classes:Array<String> = [];
+		var classes = [];
 		var clasz:String;
 
 		for(file in files)
 		{
 			clasz = dir.getRelativePath(file).substr(0, -3);
 			clasz = clasz.split("/").join(".");
-			if(clasz == "TestMain") continue;
-			if(testFilter != null && clasz.indexOf(testFilter) == -1) continue;
+         var ignore:Bool = false;
+			if(clasz == "TestMain") ignore = true;
+			if(testFilter != null && clasz.indexOf(testFilter) == -1) ignore = true;
 			
-			classes.push(clasz);
+			classes.push({name: clasz, ignore: ignore});
 			
 		}	
 		
 		return classes;
 	}
 	
-	private function generateTestSuiteClassFromClasses(classes:Array<String>):String
+	private function generateTestSuiteClassFromClasses(classes:Array<{name: String, ignore: Bool}>):String
 	{
 		var imports:String = "";
 		var tests:String = "";
 		
 		for(clasz in classes)
 		{
-			imports += "\nimport " + clasz + ";";
-			tests += "\n		add(" + clasz + ");";
+			imports += "\nimport " + clasz.name + ";";
+         if(clasz.ignore)
+			   tests += "\n		ignore.push(" + clasz.name + ");";
+         else
+            tests += "\n		add(" + clasz.name + ");";
 		}
 		
 		return TemplateUtil.getTemplate("test-suite", {imports:imports,tests:tests});

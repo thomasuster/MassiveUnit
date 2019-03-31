@@ -13,6 +13,7 @@ class TestSuite extends massive.munit.TestSuite
 	public function new()
 	{
 		super();
+		var ignore = [];
 
 		add(massive.munit.ConfigTest);
 	}
