@@ -53,9 +53,9 @@
 package massive.munit.util;
 
 #if neko
-import neko.vm.Thread;
+import sys.thread.Thread;
 #elseif cpp
-import cpp.vm.Thread;
+import sys.thread.Thread;
 #end
 
 @:expose('massive.munit.util.Timer')
